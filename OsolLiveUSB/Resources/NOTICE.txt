@@ -1,0 +1,11 @@
+Compressed stage2 image was modified from original OpenSolaris destribution.
+
+If you hack this utility, take care of diference below;
+
+
+ ADDR |      ORIGINAL      |     MODIFICATION   |
+------+--------------------+--------------------+-------------------------------------
+0x01F8|    0200(0x0002)    |    3310(0x1033)    |STAGE2_BLOCK_LIST(4096+50+1)
+0x0208|FFFFFF00(0x00FFFFFF)|FF000000(0x000000FF)|STAGE2_INSTALLPART(Partition0,Slice0)
+0x0211|      00(0x00)      |      01(0x01)      |STAGE2_FORCE_LBA(enable)
+
