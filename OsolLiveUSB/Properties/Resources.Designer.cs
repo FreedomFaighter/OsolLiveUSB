@@ -66,5 +66,19 @@ namespace OsolLiveUSB.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        internal static byte[] stage1 {
+            get {
+                object obj = ResourceManager.GetObject("stage1", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] stage2 {
+            get {
+                object obj = ResourceManager.GetObject("stage2", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

@@ -61,16 +61,14 @@ namespace OsolLiveUSB
             this.grpTgtDrv = new System.Windows.Forms.GroupBox();
             this.cmbDrv = new System.Windows.Forms.ComboBox();
             this.refreshBtn = new System.Windows.Forms.Button();
-            this.createBtn = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.cmbCap = new System.Windows.Forms.ComboBox();
+            this.startBtn = new System.Windows.Forms.Button();
             this.lblSym = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.lblVersion = new System.Windows.Forms.Label();
             this.llblWeb = new System.Windows.Forms.LinkLabel();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.closeBtn = new System.Windows.Forms.Button();
             this.grpImageFile.SuspendLayout();
             this.grpTgtDrv.SuspendLayout();
-            this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -131,46 +129,17 @@ namespace OsolLiveUSB
             this.refreshBtn.UseVisualStyleBackColor = true;
             this.refreshBtn.Click += new System.EventHandler(this.refreshBtn_Click);
             // 
-            // createBtn
+            // startBtn
             // 
-            resources.ApplyResources(this.createBtn, "createBtn");
-            this.createBtn.Name = "createBtn";
-            this.createBtn.UseVisualStyleBackColor = true;
-            this.createBtn.Click += new System.EventHandler(this.createBtn_Click);
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.cmbCap);
-            resources.ApplyResources(this.groupBox1, "groupBox1");
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.TabStop = false;
-            // 
-            // cmbCap
-            // 
-            this.cmbCap.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbCap.FormattingEnabled = true;
-            this.cmbCap.Items.AddRange(new object[] {
-            resources.GetString("cmbCap.Items"),
-            resources.GetString("cmbCap.Items1"),
-            resources.GetString("cmbCap.Items2"),
-            resources.GetString("cmbCap.Items3")});
-            resources.ApplyResources(this.cmbCap, "cmbCap");
-            this.cmbCap.Name = "cmbCap";
-            this.cmbCap.SelectedIndexChanged += new System.EventHandler(this.cmbCap_SelectedIndexChanged);
+            resources.ApplyResources(this.startBtn, "startBtn");
+            this.startBtn.Name = "startBtn";
+            this.startBtn.UseVisualStyleBackColor = true;
+            this.startBtn.Click += new System.EventHandler(this.startBtn_Click);
             // 
             // lblSym
             // 
             resources.ApplyResources(this.lblSym, "lblSym");
             this.lblSym.Name = "lblSym";
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.BackColor = System.Drawing.Color.White;
-            this.pictureBox1.BackgroundImage = global::OsolLiveUSB.Properties.Resources.opensolaris_bar;
-            resources.ApplyResources(this.pictureBox1, "pictureBox1");
-            this.pictureBox1.InitialImage = null;
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.TabStop = false;
             // 
             // lblVersion
             // 
@@ -185,15 +154,31 @@ namespace OsolLiveUSB
             this.llblWeb.TabStop = true;
             this.llblWeb.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.llblWeb_LinkClicked);
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.BackColor = System.Drawing.Color.White;
+            this.pictureBox1.BackgroundImage = global::OsolLiveUSB.Properties.Resources.opensolaris_bar;
+            resources.ApplyResources(this.pictureBox1, "pictureBox1");
+            this.pictureBox1.InitialImage = null;
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.TabStop = false;
+            // 
+            // closeBtn
+            // 
+            resources.ApplyResources(this.closeBtn, "closeBtn");
+            this.closeBtn.Name = "closeBtn";
+            this.closeBtn.UseVisualStyleBackColor = true;
+            this.closeBtn.Click += new System.EventHandler(this.closeBtn_Click);
+            // 
             // LiveUSBForm
             // 
             resources.ApplyResources(this, "$this");
+            this.Controls.Add(this.closeBtn);
             this.Controls.Add(this.llblWeb);
             this.Controls.Add(this.lblVersion);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.lblSym);
-            this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.createBtn);
+            this.Controls.Add(this.startBtn);
             this.Controls.Add(this.grpTgtDrv);
             this.Controls.Add(this.grpImageFile);
             this.Controls.Add(this.logText);
@@ -202,7 +187,6 @@ namespace OsolLiveUSB
             this.Name = "LiveUSBForm";
             this.grpImageFile.ResumeLayout(false);
             this.grpTgtDrv.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -217,15 +201,14 @@ namespace OsolLiveUSB
         private System.Windows.Forms.GroupBox grpTgtDrv;
         private System.Windows.Forms.ComboBox cmbDrv;
         private System.Windows.Forms.Button refreshBtn;
-        private System.Windows.Forms.Button createBtn;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.ComboBox cmbCap;
+        private System.Windows.Forms.Button startBtn;
         public System.Windows.Forms.ProgressBar pgbWrt;
         public System.Windows.Forms.TextBox logText;
         private System.Windows.Forms.Label lblSym;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label lblVersion;
         private System.Windows.Forms.LinkLabel llblWeb;
+        private System.Windows.Forms.Button closeBtn;
     }
 }
 

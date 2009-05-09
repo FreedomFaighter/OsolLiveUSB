@@ -35,21 +35,21 @@ namespace OsolLiveUSB
         public long size = 0;
 
         public DrvInfo() {
-            devname = "";
-            model = "";
-            size = 0;
+            this.devname = "";
+            this.model = "";
+            this.size = 0;
         }
 
         public DrvInfo(string newdev) {
-            devname = newdev;
-            model = "";
-            size = GetSize();
+            this.devname = newdev;
+            this.model = "";
+            this.size = GetSize();
         }
 
         public DrvInfo(string newdev, string newmodel) {
-            devname = newdev;
-            model = newmodel;
-            size = GetSize();
+            this.devname = newdev;
+            this.model = newmodel;
+            this.size = GetSize();
         }
 
         long GetSize() {
