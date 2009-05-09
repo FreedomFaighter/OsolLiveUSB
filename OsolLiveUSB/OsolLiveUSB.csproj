@@ -12,7 +12,16 @@
     <AssemblyName>OsolLiveUSB</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <ApplicationIcon>OpenSolaris.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\OpenSolaris.ico</ApplicationIcon>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkSubset>
+    </TargetFrameworkSubset>
+    <TargetZone>LocalIntranet</TargetZone>
+    <GenerateManifests>false</GenerateManifests>
+    <ApplicationManifest>OsolLiveUSB.exe.manifest</ApplicationManifest>
+    <ManifestCertificateThumbprint>3158D59895450B82657CA2BCA50947736C3EBD6D</ManifestCertificateThumbprint>
+    <ManifestKeyFile>OsolLiveUSB_TemporaryKey.pfx</ManifestKeyFile>
+    <SignManifests>false</SignManifests>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -24,34 +33,30 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <ApplicationVersion>0.0.3.0</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkSubset>
-    </TargetFrameworkSubset>
-    <TargetZone>LocalIntranet</TargetZone>
-    <GenerateManifests>false</GenerateManifests>
-    <ApplicationManifest>OsolLiveUSB.exe.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -63,6 +68,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DkLabel.cs" />
+    <Compile Include="HeadImg.cs" />
     <Compile Include="DevWriter.cs" />
     <Compile Include="DrvInfo.cs" />
     <Compile Include="LiveUSBForm.cs">
@@ -72,6 +79,7 @@
       <DependentUpon>LiveUSBForm.cs</DependentUpon>
     </Compile>
     <Compile Include="LiveUSB.cs" />
+    <Compile Include="Mbr.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="LiveUSBForm.resx">
       <DependentUpon>LiveUSBForm.cs</DependentUpon>
@@ -100,10 +108,13 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="OsolLiveUSB.exe.manifest" />
-    <None Include="Resources\opensolaris_bar.bmp" />
+    <None Include="OsolLiveUSB_TemporaryKey.pfx" />
+    <EmbeddedResource Include="Resources\opensolaris_bar.bmp" />
+    <EmbeddedResource Include="Resources\stage1.gz" />
+    <EmbeddedResource Include="Resources\stage2.gz" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="OpenSolaris.ico" />
+    <Content Include="Resources\OpenSolaris.ico" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -136,6 +147,18 @@
       <ProductName>Windows インストーラ 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <PublishFile Include="Resources\OpenSolaris.ico">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

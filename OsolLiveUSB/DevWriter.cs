@@ -34,10 +34,10 @@ namespace OsolLiveUSB
         private IntPtr hDev;
 
         public DevWriter( StringBuilder dn ) {
-            devname = new StringBuilder(dn.ToString());
+            this.devname = new StringBuilder(dn.ToString());
 
-            hDev = RawIO.CreateFile(
-                devname.ToString(),
+            this.hDev = RawIO.CreateFile(
+                this.devname.ToString(),
                 (uint) (    RawIO.DesiredAccess.GENERIC_READ |
                             RawIO.DesiredAccess.GENERIC_WRITE ),
                 (uint) (    RawIO.ShareMode.FILE_SHARE_READ |
@@ -49,20 +49,25 @@ namespace OsolLiveUSB
                 );
         }
 
-        public void DoWriteMB( uint nMB, byte[] buf) {
-            uint len = 0;
+        public void DoWrite(byte[] buf, uint offset, uint len)
+        {
+            uint outlen = 0;
             RawIO.SetFilePointer(
                 hDev,
-                nMB * 1024 * 1024,
-                ref len,
-                (uint) RawIO.MoveMethod.FileBegin);
+                offset,
+                ref outlen,
+                (uint)RawIO.MoveMethod.FileBegin);
 
             RawIO.WriteFile(
                 hDev,
-                buf, (uint)buf.Length,
-                out len,
+                buf, (uint)len,
+                out outlen,
                 IntPtr.Zero
                 );
+        }
+
+        public void DoWriteMB( uint nMB, byte[] buf) {
+            this.DoWrite(buf, nMB * 1024 * 1024, (uint)buf.Length);
         }
 
         ~DevWriter() {

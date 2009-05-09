@@ -38,7 +38,6 @@ namespace OsolLiveUSB
          
         /// Public variables:
         public static string strImgFile = "";
-        public static string strHeadImgFile = "";
         public static DrvInfo curDrv = new DrvInfo();
         public static ArrayList arrDrv = new ArrayList();
         
@@ -63,7 +62,6 @@ namespace OsolLiveUSB
                 }
             }
         }
-
         
         public static long GetFileSize( string fname )
         {
@@ -74,9 +72,6 @@ namespace OsolLiveUSB
                 return -1;                
             }         
         }
-
-
-
 
         private static System.Threading.Mutex _mutex;
         

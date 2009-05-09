@@ -1,4 +1,28 @@
-﻿using System;
+﻿/*
+ * CDDL HEADER START
+ *
+ * The contents of this file are subject to the terms of the
+ * Common Development and Distribution License (the "License").
+ * You may not use this file except in compliance with the License.
+ *
+ * You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+ * or http://www.opensolaris.org/os/licensing.
+ * See the License for the specific language governing permissions
+ * and limitations under the License.
+ *
+ * When distributing Covered Code, include this CDDL HEADER in each
+ * file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+ * If applicable, add the following below this CDDL HEADER, with the
+ * fields enclosed by brackets "[]" replaced with your own identifying
+ * information: Portions Copyright [yyyy] [name of copyright owner]
+ *
+ * CDDL HEADER END
+ */
+
+/*      Copyright (c) 2009 Hiroshi Chonan <chonan@pid0.org> */
+/*        All Rights Reserved   */
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,20 +39,14 @@ namespace OsolLiveUSB
         public LiveUSBForm()
         {
             InitializeComponent();
-            lblImgFile.Text = LiveUSB.strImgFile;
-            refreshDrv();
-            cmbCap.SelectedIndex = 0;
-            LiveUSB.strHeadImgFile = string.Format(
-                "{0}\\headimg\\{1}.dat",
-                Application.StartupPath,
-                cmbCap.SelectedIndex
-            );
+            this.lblImgFile.Text = LiveUSB.strImgFile;
+            this.refreshDrv();
         }
 
         public void AppendLog(string strAppend)
         {
-            logText.AppendText(strAppend);
-            logText.AppendText(Environment.NewLine);
+            this.logText.AppendText(strAppend);
+            this.logText.AppendText(Environment.NewLine);
         }
 
 
@@ -37,27 +55,27 @@ namespace OsolLiveUSB
             LiveUSB.arrDrv.Clear();
             LiveUSB.DetectUSBDrive();
 
-            cmbDrv.Items.Clear();
+            this.cmbDrv.Items.Clear();
             foreach ( DrvInfo drvname in LiveUSB.arrDrv ) {
-                cmbDrv.Items.Add(drvname);
+                this.cmbDrv.Items.Add(drvname);
             }
 
             if ( cmbDrv.Items.Count > 0 ) {
-                cmbDrv.SelectedIndex = 0;
+                this.cmbDrv.SelectedIndex = 0;
                 LiveUSB.curDrv = (DrvInfo)cmbDrv.SelectedItem;
-                cmbDrv.Enabled = true;
+                this.cmbDrv.Enabled = true;
             } else {
-                cmbDrv.Enabled = false;
+                this.cmbDrv.Enabled = false;
             }
         }
 
         private void EnableAll(bool flag)
         {
-            createBtn.Enabled = flag;
-            refreshBtn.Enabled = flag;
-            browseBtn.Enabled = flag;
-            cmbCap.Enabled = flag;
-            cmbDrv.Enabled = flag;
+            this.startBtn.Enabled = flag;
+            this.closeBtn.Enabled = flag;
+            this.refreshBtn.Enabled = flag;
+            this.browseBtn.Enabled = flag;
+            this.cmbDrv.Enabled = flag;
         }
 
 
@@ -68,21 +86,21 @@ namespace OsolLiveUSB
             if (dlgImgFile.ShowDialog() == DialogResult.OK )
             {
                 LiveUSB.strImgFile = dlgImgFile.FileName;
-                lblImgFile.Text = dlgImgFile.FileName;
+                this.lblImgFile.Text = dlgImgFile.FileName;
 
-                if (cmbDrv.Items.Count > 0)
+                if (this.cmbDrv.Items.Count > 0)
                 {
-                    createBtn.Enabled = true;
+                    this.startBtn.Enabled = true;
                 }
             }
         }
 
         private void refreshBtn_Click(object sender, EventArgs e)
         {
-            refreshDrv();
+            this.refreshDrv();
         }
 
-        private void createBtn_Click(object sender, EventArgs e)
+        private void startBtn_Click(object sender, EventArgs e)
         {
             DrvInfo drv = (DrvInfo)cmbDrv.SelectedItem;
 
@@ -104,60 +122,43 @@ namespace OsolLiveUSB
                 }
             }
                         
-            EnableAll(false);
+            this.EnableAll(false);
 
-            logText.AppendText("**USB Image");
-            logText.AppendText(Environment.NewLine);
+            this.AppendLog("**USB Image");
             
             // Get length of usb image file
             long imgSize = LiveUSB.GetFileSize(LiveUSB.strImgFile);
             if ( imgSize >= 0 ) {
-                logText.AppendText(string.Format(" File: {0}", LiveUSB.strImgFile));
-                logText.AppendText(Environment.NewLine);
-                logText.AppendText(string.Format(" Size: {0}", imgSize));
-                logText.AppendText(Environment.NewLine);
+                this.AppendLog(string.Format(" File: {0}", LiveUSB.strImgFile));
+                this.AppendLog(string.Format(" Size: {0}", imgSize));
             } else {
-                logText.AppendText(string.Format("**ERROR** Imgfile {0} not exist!", LiveUSB.strImgFile));
-                logText.AppendText(Environment.NewLine);
+                this.AppendLog(string.Format("**ERROR** Imgfile {0} not exist!", LiveUSB.strImgFile));
                 EnableAll(true);
                 return;
             }
 
             // Check Target Drive
             long devSize = drv.size;
-            long tmplSize = (long)(1 << (cmbCap.SelectedIndex)) * 1000000000L;
-            
-            if ( drv.size <= tmplSize ) {
-                logText.AppendText("**ERROR** Device capacity is too small for template");
-                EnableAll(true);
-                return;
-            }
-
-            if ( tmplSize <= (imgSize + ( 1024*1024*4 ))) 
+            if ( devSize <= (imgSize + ( 1024*1024*8 ))) 
             {
-                logText.AppendText("**ERROR** Template capacity is too small for USB Image");
-                EnableAll(true);
+                this.AppendLog("**ERROR** Device capacity is too small for USB Image");
+                this.EnableAll(true);
                 return;
             }
+            
 
 
-            logText.AppendText("** Target Device");
-            logText.AppendText(Environment.NewLine);
-            logText.AppendText(" Device: " + drv.devname);
-            logText.AppendText(Environment.NewLine);
-            logText.AppendText(" Model: " + drv.model);
-            logText.AppendText(Environment.NewLine);
-            logText.AppendText(" Total Size: " + drv.size);
-            logText.AppendText(Environment.NewLine);
+            this.AppendLog("** Target Device");
+            this.AppendLog(" Device: " + drv.devname);
+            this.AppendLog(" Model: " + drv.model);
+            this.AppendLog(" Total Size: " + drv.size);
 
-            logText.AppendText(Environment.NewLine);
-            logText.AppendText("** Writting image to USB Stick ...");
-            logText.AppendText(Environment.NewLine);
+            this.AppendLog("");
+            this.AppendLog("** Writting image to USB Stick ...");
 
-            DoWrite();
+            this.DoWrite();
 
-            logText.AppendText("** Writting Completed !");
-            logText.AppendText(Environment.NewLine);
+            this.AppendLog("** Writting Completed !");
 
             MessageBox.Show(
                         "Operation Completed!!",
@@ -166,17 +167,8 @@ namespace OsolLiveUSB
                         MessageBoxIcon.Information
                         );
 
-            EnableAll(true);
+            this.EnableAll(true);
 
-        }
-
-        private void cmbCap_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            LiveUSB.strHeadImgFile = string.Format(
-                "{0}\\headimg\\{1}.dat",
-                Application.StartupPath,
-                cmbCap.SelectedIndex
-                );
         }
 
         private void cmbDrv_SelectedIndexChanged(object sender, EventArgs e)
@@ -189,12 +181,6 @@ namespace OsolLiveUSB
             string[] chrSym = { "|", "/", "-", "\\" };
             DevWriter dw = new DevWriter(new StringBuilder(LiveUSB.curDrv.devname));
 
-            FileStream hdFileStream = new FileStream(
-                LiveUSB.strHeadImgFile, FileMode.Open, FileAccess.Read);
-
-            GZipStream hdGzipStream = new GZipStream(
-                hdFileStream, CompressionMode.Decompress);
-
             FileStream imgFileStream = new FileStream(
                 LiveUSB.strImgFile, FileMode.Open, FileAccess.Read);
 
@@ -203,25 +189,23 @@ namespace OsolLiveUSB
             int mb = 0;
             int mbmax = (int)(LiveUSB.GetFileSize(LiveUSB.strImgFile) / 1024 / 1024) + 4;
 
-            pgbWrt.Minimum = 0;
-            pgbWrt.Maximum = mbmax;
+            this.pgbWrt.Minimum = 0;
+            this.pgbWrt.Maximum = mbmax;
 
             UseWaitCursor = true;
 
-            while (true)
-            {
-                int readSize = hdGzipStream.Read(buf, 0, buf.Length);
+            // Writing Header Image
 
-                if (readSize == 0)
-                {
-                    break;
-                }
-                dw.DoWriteMB((uint)mb, buf);
+            HeadImg myHeadImg = new HeadImg(LiveUSB.curDrv.size, LiveUSB.GetFileSize(LiveUSB.strImgFile));
+            byte[] bufHeadImg = myHeadImg.GetByteArray();
 
-                pgbWrt.Value = mb++;
-                lblSym.Text = chrSym[mb % 4];
-                Application.DoEvents();
-            }
+            dw.DoWrite(bufHeadImg, 0, (uint) bufHeadImg.Length);
+            mb += 4;
+            this.pgbWrt.Value = mb;
+            Application.DoEvents();
+
+            // Writing USB Image
+            
             while (true)
             {
                 int readSize = imgFileStream.Read(buf, 0, buf.Length);
@@ -232,20 +216,30 @@ namespace OsolLiveUSB
                 }
                 dw.DoWriteMB((uint)mb, buf);
 
-                pgbWrt.Value = mb++;
-                lblSym.Text = chrSym[mb % 4];
+                this.pgbWrt.Value = mb++;
+                this.lblSym.Text = chrSym[mb % 4];
                 Application.DoEvents();
             }
-            lblSym.Text = " ";
-            UseWaitCursor = false;
+            
+            this.lblSym.Text = " ";
+            this.UseWaitCursor = false;
+            Application.DoEvents();
 
+        }
+
+        private void closeBtn_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+           
         }
 
         private void llblWeb_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            llblWeb.LinkVisited = true;
+            this.llblWeb.LinkVisited = true;
             System.Diagnostics.Process.Start("http://devzone.sites.pid0.org/OpenSolaris/opensolaris-liveusb-creator");
 
         }
+
+
     }
 }
