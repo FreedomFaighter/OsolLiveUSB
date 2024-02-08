@@ -4,4 +4,4 @@ UpgradeLog.htm
 *.user
 OsolLiveUSB/obj/
 OsolLiveUSB/bin/
-
+*.manifest
