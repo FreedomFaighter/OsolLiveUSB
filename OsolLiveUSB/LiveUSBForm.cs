@@ -119,7 +119,10 @@ namespace OsolLiveUSB
         {
             if(button.InvokeRequired)
             {
-                button.Enabled = flag;
+                button.Invoke(new Action(() =>
+                {
+                    button.Enabled = flag;
+                }));
             }
             else
             {
