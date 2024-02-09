@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.IO;
 using System.IO.Compression;
@@ -39,16 +40,26 @@ namespace OsolLiveUSB
         public LiveUSBForm()
         {
             InitializeComponent();
-            this.lblImgFile.Text = LiveUSB.strImgFile;
+            ChangeLblImageFileText(LiveUSB.strImgFile);
             this.refreshDrv();
         }
 
         public void AppendLog(string strAppend)
         {
-            this.logText.AppendText(strAppend);
-            this.logText.AppendText(Environment.NewLine);
+            if (this.logText.InvokeRequired)
+            {
+                this.logText.Invoke(new Action(() =>
+                {
+                    this.logText.AppendText(strAppend);
+                    this.logText.AppendText(Environment.NewLine);
+                }));
+            }
+            else
+            {
+                this.logText.AppendText(strAppend);
+                this.logText.AppendText(Environment.NewLine);
+            }
         }
-
 
         private void refreshDrv()
         {
@@ -56,28 +67,64 @@ namespace OsolLiveUSB
             LiveUSB.DetectUSBDrive();
 
             this.cmbDrv.Items.Clear();
-            foreach ( DrvInfo drvname in LiveUSB.arrDrv ) {
-                this.cmbDrv.Items.Add(drvname);
-            }
+            if (this.cmbDrv.InvokeRequired)
+                this.cmbDrv.Invoke(new Action(() =>
+                { this.cmbDrv.Items.AddRange(LiveUSB.arrDrv.ToArray()); }));
+            else
+                this.cmbDrv.Items.AddRange(LiveUSB.arrDrv.ToArray());
 
             if ( cmbDrv.Items.Count > 0 ) {
-                this.cmbDrv.SelectedIndex = 0;
+                if (this.cmbDrv.InvokeRequired)
+                {
+                    this.cmbDrv.Invoke(new Action(() =>
+                    {
+                        this.cmbDrv.SelectedIndex = 0;
+                    }));
+                }
+                else
+                {
+                    this.cmbDrv.SelectedIndex = 0;
+                }
                 LiveUSB.curDrv = (DrvInfo)cmbDrv.SelectedItem;
-                this.cmbDrv.Enabled = true;
+                EnabledComboDrive(true);
+                
             } else {
-                this.cmbDrv.Enabled = false;
+                EnabledComboDrive(false);
             }
         }
-
+        private void EnabledComboDrive(bool enabled)
+        {
+            if (this.cmbDrv.InvokeRequired)
+            {
+                this.cmbDrv.Invoke(new Action(() =>
+                {
+                    this.cmbDrv.Enabled = enabled;
+                }));
+            }
+            else
+            {
+                this.cmbDrv.Enabled = enabled;
+            }
+        }
         private void EnableAll(bool flag)
         {
-            this.startBtn.Enabled = flag;
-            this.closeBtn.Enabled = flag;
-            this.refreshBtn.Enabled = flag;
-            this.browseBtn.Enabled = flag;
-            this.cmbDrv.Enabled = flag;
+            EnableButton(this.startBtn, flag);
+            EnableButton(this.closeBtn, flag);
+            EnableButton(this.refreshBtn, flag);
+            EnableButton(this.browseBtn, flag);
         }
 
+        private void EnableButton(Button button, bool flag)
+        {
+            if(button.InvokeRequired)
+            {
+                button.Enabled = flag;
+            }
+            else
+            {
+                button.Enabled = flag;
+            }
+        }
 
         private void browseBtn_Click(object sender, EventArgs e)
         {
@@ -86,12 +133,23 @@ namespace OsolLiveUSB
             if (dlgImgFile.ShowDialog() == DialogResult.OK )
             {
                 LiveUSB.strImgFile = dlgImgFile.FileName;
-                this.lblImgFile.Text = dlgImgFile.FileName;
+                ChangeLblImageFileText(dlgImgFile.FileName);
 
                 if (this.cmbDrv.Items.Count > 0)
                 {
-                    this.startBtn.Enabled = true;
+                    EnableButton(this.startBtn, true);
                 }
+            }
+        }
+
+        private void ChangeLblImageFileText(String text)
+        {
+            if (this.lblImgFile.InvokeRequired) {
+                this.lblImgFile.Text = text;
+            }
+            else
+            {
+                this.lblImgFile.Text = text;
             }
         }
 
@@ -189,8 +247,20 @@ namespace OsolLiveUSB
             int mb = 0;
             int mbmax = (int)(LiveUSB.GetFileSize(LiveUSB.strImgFile) / 1024 / 1024) + 4;
 
-            this.pgbWrt.Minimum = 0;
-            this.pgbWrt.Maximum = mbmax;
+            if(this.pgbWrt.InvokeRequired)
+            {
+                this.pgbWrt.Invoke(new Action(() =>
+                {
+                    this.pgbWrt.Minimum = 0;
+                    this.pgbWrt.Maximum = mbmax;
+                }));
+            }
+            else
+            {
+                this.pgbWrt.Minimum = 0;
+                this.pgbWrt.Maximum = mbmax;
+            }
+
 
             UseWaitCursor = true;
 
@@ -201,11 +271,11 @@ namespace OsolLiveUSB
 
             dw.DoWrite(bufHeadImg, 0, (uint) bufHeadImg.Length);
             mb += 4;
-            this.pgbWrt.Value = mb;
+            ProgressBarChange(mb);
             Application.DoEvents();
 
             // Writing USB Image
-            
+
             while (true)
             {
                 int readSize = imgFileStream.Read(buf, 0, buf.Length);
@@ -216,30 +286,56 @@ namespace OsolLiveUSB
                 }
                 dw.DoWriteMB((uint)mb, buf);
 
-                this.pgbWrt.Value = mb++;
-                this.lblSym.Text = chrSym[mb % 4];
+                ProgressBarChange(mb++);
+                
+                ChangeLabelSym(chrSym[mb % 4]);
                 Application.DoEvents();
             }
             
-            this.lblSym.Text = " ";
+            ChangeLabelSym(" ");
             this.UseWaitCursor = false;
             Application.DoEvents();
 
         }
 
+        private void ChangeLabelSym(string chrSym)
+        {
+            if(this.lblSym.InvokeRequired)
+            {
+                this.lblSym.Invoke(new Action(() =>
+                {
+                    this.lblSym.Text = chrSym;
+                }));
+            }
+            else
+            {
+                this.lblSym.Text = chrSym;
+            }
+        }
+
+        private void ProgressBarChange(int progressBarValue)
+        {
+            if (this.pgbWrt.InvokeRequired)
+            {
+                this.pgbWrt.Invoke(new Action(() =>
+                {
+                    this.pgbWrt.Value = progressBarValue++;
+                }));
+            }
+            else
+            {
+                this.pgbWrt.Value = progressBarValue++;
+            }
+        }
         private void closeBtn_Click(object sender, EventArgs e)
         {
             Application.Exit();
-           
         }
 
         private void llblWeb_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             this.llblWeb.LinkVisited = true;
             System.Diagnostics.Process.Start("http://devzone.sites.pid0.org/OpenSolaris/opensolaris-liveusb-creator");
-
         }
-
-
     }
 }
