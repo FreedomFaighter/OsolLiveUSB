@@ -322,12 +322,12 @@ namespace OsolLiveUSB
             {
                 this.pgbWrt.Invoke(new Action(() =>
                 {
-                    this.pgbWrt.Value = progressBarValue++;
+                    this.pgbWrt.Value = progressBarValue;
                 }));
             }
             else
             {
-                this.pgbWrt.Value = progressBarValue++;
+                this.pgbWrt.Value = progressBarValue;
             }
         }
         private void closeBtn_Click(object sender, EventArgs e)
