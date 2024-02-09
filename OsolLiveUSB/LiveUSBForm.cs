@@ -145,7 +145,10 @@ namespace OsolLiveUSB
         private void ChangeLblImageFileText(String text)
         {
             if (this.lblImgFile.InvokeRequired) {
-                this.lblImgFile.Text = text;
+                this.lblImgFile.Invoke(new Action(() =>
+                {
+                    this.lblImgFile.Text = text;
+                }));
             }
             else
             {
