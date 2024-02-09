@@ -24,12 +24,9 @@
 
 using System;
 using System.IO;
-using System.Text;
 using System.Collections;
-using System.Collections.Generic;
 using System.Management;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
 
 namespace OsolLiveUSB
 {

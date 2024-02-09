@@ -22,9 +22,7 @@
 /*      Copyright (c) 2009 Hiroshi Chonan <chonan@pid0.org> */
 /*        All Rights Reserved   */
 
-using System;
 using System.Runtime.InteropServices;
-using System.Collections.Generic;
 using System.Text;
 
 namespace OsolLiveUSB
