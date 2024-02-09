@@ -112,6 +112,7 @@ namespace OsolLiveUSB
             EnableButton(this.closeBtn, flag);
             EnableButton(this.refreshBtn, flag);
             EnableButton(this.browseBtn, flag);
+            EnabledComboDrive(flag);
         }
 
         private void EnableButton(Button button, bool flag)
