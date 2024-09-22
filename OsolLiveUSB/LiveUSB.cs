@@ -34,7 +34,7 @@ namespace OsolLiveUSB
     {
          
         /// Public variables:
-        public static string strImgFile = "";
+        public static string strImgFile = String.Empty;
         public static DrvInfo curDrv = new DrvInfo();
         public static ArrayList arrDrv = new ArrayList();
         

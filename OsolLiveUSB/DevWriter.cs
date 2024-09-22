@@ -24,6 +24,7 @@
 
 using System;
 using System.Text;
+using System.IO;
 
 namespace OsolLiveUSB
 {
@@ -39,8 +40,7 @@ namespace OsolLiveUSB
                 this.devname.ToString(),
                 (uint) (    RawIO.DesiredAccess.GENERIC_READ |
                             RawIO.DesiredAccess.GENERIC_WRITE ),
-                (uint) (    RawIO.ShareMode.FILE_SHARE_READ |
-                            RawIO.ShareMode.FILE_SHARE_WRITE ),
+                (uint) (    FileAccess.ReadWrite ),
                 IntPtr.Zero,
                 (uint) RawIO.CreationDisposition.OPEN_EXISTING,
                 0,

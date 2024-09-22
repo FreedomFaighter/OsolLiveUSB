@@ -23,24 +23,26 @@
 /*        All Rights Reserved   */
 
 using System;
+using System.IO;
+using System.Net.Mime;
 
 namespace OsolLiveUSB
 {
     class DrvInfo
     {
-        public string devname = "";
-        public string model = "";
-        public long size = 0;
+        public string devname = String.Empty;
+        public string model = String.Empty;
+        public long size;
 
         public DrvInfo() {
-            this.devname = "";
-            this.model = "";
+            this.devname = String.Empty;
+            this.model = String.Empty;
             this.size = 0;
         }
 
         public DrvInfo(string newdev) {
             this.devname = newdev;
-            this.model = "";
+            this.model = String.Empty;
             this.size = GetSize();
         }
 
@@ -52,14 +54,14 @@ namespace OsolLiveUSB
 
         long GetSize() {
             byte[] obuf = new byte[255];
-            bool result = false;
-            uint outlen = 0;
-            long length = 0;
-
+            bool result;
+            uint outlen;
+            long length = default;
+            
             IntPtr hDrv = RawIO.CreateFile(
                 devname,
                 (uint) RawIO.DesiredAccess.GENERIC_READ,
-                (uint) RawIO.ShareMode.FILE_SHARE_READ,
+                (uint) FileShare.Read,
                 IntPtr.Zero,
                 (uint) RawIO.CreationDisposition.OPEN_EXISTING,
                 0,

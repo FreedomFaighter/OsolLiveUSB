@@ -25,6 +25,7 @@
 using System;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Text;
 
 namespace OsolLiveUSB
@@ -36,12 +37,12 @@ namespace OsolLiveUSB
         static int HeadCylinder = 2;
         static int headimgsize = BytePerSector * SectorPerCylinder * HeadCylinder;
         
-        long totalsize = 0;
-        long totalsec = 0;
-        long totalcyl = 0;
-        long usbimgsize = 0;
-        long usbimgsec = 0;
-        long usbimgcyl = 0;
+        long totalsize;
+        long totalsec;
+        long totalcyl;
+        long usbimgsize;
+        long usbimgsec;
+        long usbimgcyl;
 
         byte[] headbuf;
         byte[] BootRecord;
@@ -97,15 +98,7 @@ namespace OsolLiveUSB
 
         public void GenerateBootRecord()
         {
-            byte[] stage1 = new byte[BytePerSector];
-
-            // Read Stagge1 image from manifest resource
-            System.Reflection.Assembly assembly = System.Reflection.Assembly.GetEntryAssembly();
-            Stream Stage1GZStream = assembly.GetManifestResourceStream("OsolLiveUSB.Resources.stage1.gz");
-            GZipStream Stage1Stream = new GZipStream(
-                Stage1GZStream, CompressionMode.Decompress, false);
-
-            Stage1Stream.Read(stage1, 0, BytePerSector);
+            byte[] stage1 = ReadStageFileFromResourceStream("OsolLiveUSB.Resources.stage1.gz");
 
             Mbr myMBR = new Mbr(stage1);
 
@@ -160,20 +153,24 @@ namespace OsolLiveUSB
 
         }
 
-        public byte[] GetStage2Img()
+        public byte[] ReadStageFileFromResourceStream(String resourceName)
         {
-            
             // Read Stagge2 image from manifest resource
             System.Reflection.Assembly assembly = System.Reflection.Assembly.GetEntryAssembly();
-            Stream Stage2GZStream = assembly.GetManifestResourceStream("OsolLiveUSB.Resources.stage2.gz");
+            Stream Stage2GZStream = assembly.GetManifestResourceStream(resourceName);
             GZipStream Stage2Stream = new GZipStream(
                 Stage2GZStream, CompressionMode.Decompress, false);
 
-            byte[] stage2 = new byte[138608]; // ###
+            int readByte;
+            byte[] bytesFromStream = new byte[Stage2Stream.Length];
+            while ((readByte = Stage2Stream.ReadByte()) != -1)
+                bytesFromStream.Append((byte)readByte);
+            return bytesFromStream;
+        }
 
-            Stage2Stream.Read(stage2, 0, 138608); // ###
-
-            return stage2;
+        public byte[] GetStage2Img()
+        {
+            return ReadStageFileFromResourceStream("OsolLiveUSB.Resources.stage2.gz");
         }
 
         public byte[] GetByteArray()

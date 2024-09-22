@@ -22,6 +22,7 @@
 /*      Copyright (c) 2009 Hiroshi Chonan <chonan@pid0.org> */
 /*        All Rights Reserved   */
 
+using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -92,17 +93,6 @@ namespace OsolLiveUSB
 
         private mbr myMbr;
 
-        private unsafe static void MemCopy(
-            byte* dst,
-            byte* src,
-            int count)
-        {
-            while (count-- > 0)
-            {
-                *dst++ = *src++;
-            }
-        }
-
 
         public Mbr(byte[] imgMbr)
         {
@@ -115,8 +105,8 @@ namespace OsolLiveUSB
             {
                 fixed (byte* src = imgMbr, tmpbuf = bufMbr, dst = myMbr.byteStream)
                 {
-                    MemCopy(tmpbuf, src, sizeof(mbr));
-                    MemCopy(dst, tmpbuf, sizeof(mbr));
+                    RawIO.memcpy((IntPtr)tmpbuf, (IntPtr)src, sizeof(mbr));
+                    RawIO.memcpy((IntPtr)dst, (IntPtr)tmpbuf, sizeof(mbr));
                 }
             }
 
@@ -224,7 +214,7 @@ namespace OsolLiveUSB
             {
                 fixed (byte* dst = this.myMbr.p_table)
                 {
-                    MemCopy(dst + (p_no * sizeof(partition)), pt.byteStream, sizeof(partition));
+                    RawIO.memcpy((IntPtr)(dst + (p_no * sizeof(partition))), (IntPtr)pt.byteStream, sizeof(partition));
                 }
             }
         }
@@ -238,7 +228,7 @@ namespace OsolLiveUSB
             byte[] retBuf = new byte[sizeof(mbr)];
             fixed (byte* src = myMbr.byteStream, dst = retBuf)
             {
-                MemCopy(dst, src, sizeof(mbr));
+                RawIO.memcpy((IntPtr)dst, (IntPtr)src, sizeof(mbr));
             }
             return retBuf;
         }

@@ -22,8 +22,12 @@
 /*      Copyright (c) 2009 Hiroshi Chonan <chonan@pid0.org> */
 /*        All Rights Reserved   */
 
+using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Windows.Forms;
 
 namespace OsolLiveUSB
 {
@@ -128,30 +132,20 @@ namespace OsolLiveUSB
         }
 
         private label myLabel;
-
-        private unsafe static void MemCopy(
-            byte* dst,
-            byte* src,
-            int count)
-        {
-            while (count-- > 0)
-            {
-                *dst++ = *src++;
-            }
-        }
-
+        
         unsafe private void calcCksum()
         {
             ushort cksum = 0x0000;
             ushort current = 0x0000;
             byte[] curbuf = new byte[2];
 
-            fixed (byte* src = myLabel.byteStream, dst = curbuf)
+            fixed (byte* src = myLabel.byteStream)
             {
                 for (int i = 0; i < sizeof(label) - 2; i += 2)
                 {
-                    MemCopy(dst, src + i, 2);
-                    current = (ushort)((dst[1] << 8) | dst[0]);
+                    IntPtr dst = Marshal.AllocHGlobal(2);
+                    RawIO.memcpy(dst, (IntPtr)(src + i), 2);
+                    current = (ushort)((Marshal.ReadByte(dst, 1) << 8) | Marshal.ReadByte(dst, 0));
                     cksum ^= current;
                 }
             }
@@ -210,7 +204,7 @@ namespace OsolLiveUSB
 
             fixed (byte* src = myLabel.byteStream, dst = retBuf)
             {
-                MemCopy(dst, src, sizeof(label));
+                RawIO.memcpy((IntPtr)dst, (IntPtr)src, sizeof(label));
             }
             return retBuf;
         }
@@ -242,10 +236,9 @@ namespace OsolLiveUSB
             // Copy Slice to Disklabel
             unsafe
             {
-                fixed (byte* dst = myLabel.v_slice)
-                {
-                    MemCopy(dst + (p_no * sizeof(slice)), sl.byteStream, sizeof(slice));
-                }
+                IntPtr dst = Marshal.AllocHGlobal(sizeof(slice));
+                IntPtr src = new IntPtr(sl.byteStream);
+                RawIO.memcpy(dst + (p_no * sizeof(slice)), src, sizeof(slice));
             }
             // Calc checksum again
             this.calcCksum();
@@ -258,12 +251,11 @@ namespace OsolLiveUSB
             strLabel.PadRight(128, (char)0x00);
 
             byte[] buf = Encoding.ASCII.GetBytes(strLabel);
-
             unsafe
             {
                 fixed (byte* dst = myLabel.v_asciilabel, src = buf)
                 {
-                    MemCopy(dst, src, 128);
+                    RawIO.memcpy((IntPtr)dst, (IntPtr)src, 128);
                 }
             }
             // Calc checksum again

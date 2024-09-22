@@ -29,6 +29,9 @@ namespace OsolLiveUSB
 {
     class RawIO
     {
+        [DllImport("Kernel32.dll", EntryPoint = "memcpy", CharSet = CharSet.Auto)]
+        public static extern void memcpy(IntPtr dest, IntPtr src, int length);
+
         [DllImport("Kernel32.dll", EntryPoint="CreateFile", CharSet=CharSet.Auto, SetLastError=true)]
         public static extern IntPtr CreateFile(
             string lpFileName,              
@@ -59,16 +62,6 @@ namespace OsolLiveUSB
             IntPtr lpOverlapped             
             );
 
-        [DllImport("Kernel32.dll", EntryPoint="ReadFile", CharSet=CharSet.Auto, SetLastError=true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool ReadFile(
-            IntPtr hFile,                   
-            byte[] lpBuffer,                
-            uint nNumberOfBytesToRead,      
-            out uint lpNumberOfBytesRead,   
-            IntPtr lpOverlapped             
-        );
-
         [DllImport("Kernel32.dll", EntryPoint = "WriteFile", CharSet = CharSet.Auto, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool WriteFile(
@@ -87,54 +80,19 @@ namespace OsolLiveUSB
             uint dwMoveMethod
         );
 
-        private enum FileAccess : uint
-        {
-            FILE_ANY_ACCESS                     = 0x0000,
-            FILE_SPECIAL_ACCESS                 = FILE_ANY_ACCESS,
-            FILE_READ_ACCESS                    = 0x0001,
-            FILE_WRITE_ACCESS                   = 0x0002,
-        }
-        private enum IoMethod : uint
-        {
-            METHOD_BUFFERED                     = 0x00000000,
-            METHOD_IN_DIRECT                    = 0x00000001,
-            METHOD_OUT_DIRECT                   = 0x00000002,
-            METHOD_NEITHER                      = 0x00000003
-        }
-
         public enum DesiredAccess : uint {
             GENERIC_READ                        = 0x80000000,
             GENERIC_WRITE                       = 0x40000000,
             GENERIC_EXECUTE                     = 0x20000000,
             GENERIC_ALL                         = 0x10000000,
         }
-        public enum ShareMode : uint {
-            FILE_SHARE_READ                     = 0x00000001,
-            FILE_SHARE_WRITE                    = 0x00000002,
-            FILE_SHARE_DELETE                   = 0x00000004,  
-        }
-        public enum CreationDisposition : uint {
-            CREATE_NEW                          = 1,
-            CREATE_ALWAYS                       = 2,
-            OPEN_EXISTING                       = 3,
-            OPEN_ALWAYS                         = 4,
-            TRUNCATE_EXISTING                   = 5,
-        }
-        public enum FlagsAndAttributes : uint {
-            FILE_ATTRIBUTE_READONLY             = 0x00000001,
-            FILE_ATTRIBUTE_HIDDEN               = 0x00000002,
-            FILE_ATTRIBUTE_SYSTEM               = 0x00000004,
-            FILE_ATTRIBUTE_DIRECTORY            = 0x00000010,
-            FILE_ATTRIBUTE_ARCHIVE              = 0x00000020,
-            FILE_ATTRIBUTE_DEVICE               = 0x00000040,
-            FILE_ATTRIBUTE_NORMAL               = 0x00000080,
-            FILE_ATTRIBUTE_TEMPORARY            = 0x00000100,
-            FILE_ATTRIBUTE_SPARSE_FILE          = 0x00000200,
-            FILE_ATTRIBUTE_REPARSE_POINT        = 0x00000400,
-            FILE_ATTRIBUTE_COMPRESSED           = 0x00000800,
-            FILE_ATTRIBUTE_OFFLINE              = 0x00001000,
-            FILE_ATTRIBUTE_NOT_CONTENT_INDEXED  = 0x00002000,
-            FILE_ATTRIBUTE_ENCRYPTED            = 0x00004000,
+
+        public static class CreationDisposition {
+            internal static uint CREATE_NEW = 1;
+            internal static uint CREATE_ALWAYS = 2;
+            internal static uint OPEN_EXISTING = 3;
+            internal static uint OPEN_ALWAYS = 4;
+            internal static uint TRUNCATE_EXISTING = 5;
         }
 
         public enum IoControlCode : uint {
